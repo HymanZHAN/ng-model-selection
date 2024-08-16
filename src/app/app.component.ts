@@ -1,13 +1,28 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { SettingsService } from './settings.service';
+import { AsyncPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [AsyncPipe, FormsModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = 'model-select';
+  private settings = inject(SettingsService);
+
+  // state
+  modelsInSelection$ = this.settings.modelsInSelection$;
+  selectedModel$ = this.settings.selectedModel$;
+
+  // action
+  selectModel$ = this.settings.selectModel$;
+
+  updateSelection(event: Event) {
+    const select = event.target as HTMLSelectElement;
+
+    this.selectModel$.next(select.value);
+  }
 }
